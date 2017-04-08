@@ -4,6 +4,20 @@
 
 std::vector<stock> stocks;
 
+class clickpack: public Fl_Pack {
+public:
+	clickpack(int x, int y, int w, int h): Fl_Pack(x, y, w, h) {}
+
+	int handle(int e) {
+		if (e == FL_PUSH) {
+			do_callback();
+			return 1;
+		}
+
+		return Fl_Pack::handle(e);
+	}
+};
+
 Fl_Scroll *scroll = (Fl_Scroll *) 0;
 Fl_Pack *list = (Fl_Pack *) 0;
 Fl_Box *status = (Fl_Box *) 0;
@@ -24,6 +38,13 @@ void nukenewline(char buf[]) {
 			break;
 		}
 	}
+}
+
+static void picked(Fl_Widget *, void *data) {
+
+	const u32 num = (u32) (uintptr_t) data;
+
+	printf("clicked %u\n", num);
 }
 
 static void load() {
@@ -64,7 +85,7 @@ static void load() {
 	u32 i;
 	const u32 max = stocks.size();
 	for (i = 0; i < max; i++) {
-		Fl_Pack *p = new Fl_Pack(0, 0, 180, 20);
+		Fl_Pack *p = new clickpack(0, 0, 180, 20);
 		p->type(Fl_Pack::HORIZONTAL);
 		p->box(FL_SHADOW_FRAME);
 
@@ -94,6 +115,8 @@ static void load() {
 		//b->box(FL_UP_BOX);
 
 		p->tooltip(stocks[i].comment);
+		p->callback(picked);
+		p->user_data((void *) i);
 
 		p->end();
 		list->add(p);
