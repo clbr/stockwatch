@@ -1,0 +1,29 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0110 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_Chart.H>} {public global
+} 
+
+Function {} {open return_type int
+} {
+  Fl_Window {} {
+    label StockWatch open
+    xywh {115 118 1105 855} type Double resizable size_range {1105 855 0 0} visible
+  } {
+    Fl_Scroll scroll {open
+      xywh {0 0 210 855} type VERTICAL box UP_BOX
+    } {
+      Fl_Pack list {open
+        xywh {0 0 180 825} resizable
+      } {}
+    }
+    Fl_Box {} {
+      xywh {215 4 885 417}
+      class Fl_Chart
+    }
+    Fl_Box status {
+      xywh {535 599 215 92} resizable
+    }
+  }
+} 
