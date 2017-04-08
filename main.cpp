@@ -95,6 +95,8 @@ static void load() {
 
 int main(int argc, char **argv) {
 
+	Fl::scheme("gtk+");
+
 	Fl_Double_Window *w;
 	{
 		Fl_Double_Window *o =
