@@ -3,13 +3,18 @@
 
 #include <vector>
 
+struct stockval {
+	float val;
+	time_t date;
+};
+
 struct stock {
 	char ticker[16];
 	float target;
 	char comment[256];
 
-	std::vector<float> weekly;
-	std::vector<float> daily;
+	std::vector<stockval> weekly;
+	std::vector<stockval> daily;
 };
 
 extern std::vector<stock> stocks;
