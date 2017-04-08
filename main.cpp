@@ -43,8 +43,15 @@ static void load() {
 		nukenewline(path);
 
 		stock s;
-		if (sscanf(path, "%s %f %s", s.ticker, &s.target, s.comment) != 3)
+		if (sscanf(path, "%s %f", s.ticker, &s.target) != 2)
 			die("Malformed line %s\n", path);
+
+		const char *ptr = strchr(path, ' ');
+		ptr = strchr(ptr + 1, ' ');
+		ptr++;
+
+		strncpy(s.comment, ptr, sizeof(s.comment));
+		s.comment[sizeof(s.comment) - 1] = '\0';
 
 		stocks.push_back(s);
 	}
@@ -86,6 +93,8 @@ static void load() {
 		b->copy_label(buf);
 		//b->box(FL_UP_BOX);
 
+		p->tooltip(stocks[i].comment);
+
 		p->end();
 		list->add(p);
 	}
@@ -104,10 +113,10 @@ int main(int argc, char **argv) {
 		w = o;
 		{
 			scroll = new Fl_Scroll(0, 0, 210, 855);
-			scroll->type(2);
+			scroll->type(Fl_Scroll::VERTICAL_ALWAYS);
 			scroll->box(FL_UP_BOX);
 			{
-				list = new Fl_Pack(0, 0, 180, 825);
+				list = new Fl_Pack(0, 0, 200, 825);
 				list->end();
 				Fl_Group::current()->resizable(list);
 			}	// Fl_Pack* list
