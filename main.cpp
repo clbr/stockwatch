@@ -1,3 +1,4 @@
+#include <lrtypes.h>
 #include "ui.h"
 #include "data.h"
 
@@ -6,6 +7,91 @@ std::vector<stock> stocks;
 Fl_Scroll *scroll = (Fl_Scroll *) 0;
 Fl_Pack *list = (Fl_Pack *) 0;
 Fl_Box *status = (Fl_Box *) 0;
+
+void die(const char fmt[], ...) {
+	va_list ap;
+	va_start(ap, fmt);
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
+	exit(1);
+}
+
+void nukenewline(char buf[]) {
+	u32 i;
+	for (i = 0; buf[i]; i++) {
+		if (buf[i] == '\n') {
+			buf[i] = '\0';
+			break;
+		}
+	}
+}
+
+static void load() {
+
+	status->label("Loading...");
+
+	const char * const home = getenv("HOME");
+	if (!home)
+		die("No home?\n");
+	char path[PATH_MAX];
+	snprintf(path, PATH_MAX, "%s/.stockwatch", home);
+
+	FILE *f = fopen(path, "r");
+	if (!f) die("Can't open config file\n");
+
+	while (fgets(path, PATH_MAX, f)) {
+		nukenewline(path);
+
+		stock s;
+		if (sscanf(path, "%s %f %s", s.ticker, &s.target, s.comment) != 3)
+			die("Malformed line %s\n", path);
+
+		stocks.push_back(s);
+	}
+
+	fclose(f);
+
+	// Fetch data TODO
+	// Sort TODO
+
+	u32 i;
+	const u32 max = stocks.size();
+	for (i = 0; i < max; i++) {
+		Fl_Pack *p = new Fl_Pack(0, 0, 180, 20);
+		p->type(Fl_Pack::HORIZONTAL);
+		p->box(FL_SHADOW_FRAME);
+
+		Fl_Box *b = new Fl_Box(0, 0, 70, 20, stocks[i].ticker);
+		b->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+		b->labelfont(FL_HELVETICA | FL_BOLD);
+		//b->box(FL_UP_BOX);
+
+		char buf[32];
+		sprintf(buf, "%.2f", stocks[i].target);
+
+		b = new Fl_Box(0, 0, 55, 20);
+		b->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+		//b->labelfont(FL_HELVETICA | FL_BOLD);
+		b->copy_label(buf);
+		//b->box(FL_UP_BOX);
+
+		// TODO last day
+		const float val = rand() % 2 ? 4.45 : -4.45;
+		sprintf(buf, "%.2f%%", val);
+
+		b = new Fl_Box(0, 0, 55, 20);
+		b->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+		b->labelcolor(val < 0 ? FL_DARK_RED : FL_DARK_GREEN);
+		b->labelfont(FL_HELVETICA | FL_BOLD);
+		b->copy_label(buf);
+		//b->box(FL_UP_BOX);
+
+		p->end();
+		list->add(p);
+	}
+
+	status->label("");
+}
 
 int main(int argc, char **argv) {
 
@@ -45,5 +131,8 @@ int main(int argc, char **argv) {
 		o->end();
 	}			// Fl_Double_Window* o
 	w->show(argc, argv);
+
+	load();
+
 	return Fl::run();
 }
