@@ -2,6 +2,8 @@
 
 std::vector<stock> stocks;
 
+static stockchart *daychart, *yearchart;
+
 class clickpack: public Fl_Pack {
 public:
 	clickpack(int x, int y, int w, int h): Fl_Pack(x, y, w, h) {}
@@ -23,8 +25,10 @@ Fl_Box *status = (Fl_Box *) 0;
 static void picked(Fl_Widget *, void *data) {
 
 	const u32 num = (u32) (uintptr_t) data;
+	//printf("clicked %u\n", num);
 
-	printf("clicked %u\n", num);
+	yearchart->setsource(&stocks[num].weekly, stocks[num].target);
+	daychart->setsource(&stocks[num].daily, stocks[num].target);
 }
 
 static void import(FILE * const f, std::vector<stockval> &vec) {
@@ -218,9 +222,9 @@ int main(int argc, char **argv) {
 		{
 			Fl_Tabs *tabs = new Fl_Tabs(215, 4, 885, 417);
 
-			stockchart *o = new stockchart(215, 38, 885, 383, "5 years");
+			yearchart = new stockchart(215, 38, 885, 383, "5 years");
 
-			o = new stockchart(215, 38, 885, 383, "30 days");
+			daychart = new stockchart(215, 38, 885, 383, "30 days");
 
 			tabs->end();
 
