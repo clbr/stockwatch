@@ -96,7 +96,10 @@ static void load() {
 		b->copy_label(buf);
 		//b->box(FL_UP_BOX);
 
-		p->tooltip(stocks[i].comment);
+		char tipbuf[256 + 16];
+		sprintf(tipbuf, "%s, target %.2f", stocks[i].comment, stocks[i].target);
+
+		p->copy_tooltip(tipbuf);
 		p->callback(picked);
 		p->user_data((void *) i);
 
