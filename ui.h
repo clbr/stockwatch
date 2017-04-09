@@ -10,5 +10,6 @@ extern Fl_Scroll *scroll;
 #include <FL/Fl_Pack.H>
 extern Fl_Pack *list;
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Tabs.H>
 extern Fl_Box *status;
 #endif

@@ -131,16 +131,15 @@ int main(int argc, char **argv) {
 			scroll->end();
 		}		// Fl_Scroll* scroll
 		{
-			Fl_Chart *o = new Fl_Chart(215, 4, 885, 417);
-			o->box(FL_NO_BOX);
-			o->color((Fl_Color) FL_BACKGROUND_COLOR);
-			o->selection_color((Fl_Color) FL_BACKGROUND_COLOR);
-			o->labeltype(FL_NORMAL_LABEL);
-			o->labelfont(0);
-			o->labelsize(14);
-			o->labelcolor((Fl_Color) FL_FOREGROUND_COLOR);
-			o->align(FL_ALIGN_CENTER);
-			o->when(FL_WHEN_RELEASE);
+			Fl_Tabs *tabs = new Fl_Tabs(215, 4, 885, 417);
+
+			Fl_Chart *o = new Fl_Chart(215, 38, 885, 383, "5 years");
+
+			o = new Fl_Chart(215, 38, 885, 383, "30 days");
+
+			tabs->end();
+
+			tabs->value(o);
 		}		// Fl_Chart* o
 		{
 			status = new Fl_Box(535, 599, 215, 92);
