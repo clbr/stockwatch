@@ -1,6 +1,4 @@
-#include <lrtypes.h>
-#include "ui.h"
-#include "data.h"
+#include "main.h"
 
 std::vector<stock> stocks;
 
