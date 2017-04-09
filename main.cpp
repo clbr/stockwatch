@@ -27,30 +27,74 @@ static void picked(Fl_Widget *, void *data) {
 	printf("clicked %u\n", num);
 }
 
+static void import(FILE * const f, std::vector<stockval> &vec) {
+
+	char buf[PATH_MAX];
+
+	while (fgets(buf, PATH_MAX, f)) {
+		if (buf[0] != '2')
+			continue;
+
+		nukenewline(buf);
+
+		stockval sv;
+
+		if (sscanf(buf, "%hu-%hhu-%hhu,%f", &sv.year, &sv.month, &sv.day, &sv.val) != 4) {
+			printf("Couldn't import data line '%s'\n", buf);
+			break;
+		}
+
+		vec.push_back(sv);
+	}
+}
+
 static void fetch() {
 
 	u32 i;
 	const u32 max = stocks.size();
-	char buf[PATH_MAX];
 
 	const time_t now = time(NULL);
-	struct tm dated;
+	struct tm dated, datedmonths, datedyears;
 	localtime_r(&now, &dated);
 
-	const u32 day = dated.tm_mday;
-	const u32 month = dated.tm_mon;
+	const u32 secs_per_day = 60 * 60 * 24;
 
-	struct tm tmptime;
+	const time_t monthback = now - secs_per_day * 30;
+	const time_t yearsback = now - secs_per_day * 365 * 5;
+	localtime_r(&monthback, &datedmonths);
+	localtime_r(&yearsback, &datedyears);
+
+	char buf[PATH_MAX];
 
 	scroll->hide();
 
+	// TODO real data
 	for (i = 0; i < max; i++) {
 		Fl::check();
+
+		sprintf(buf, "wget -q -O - 'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=d&ignore=.csv'",
+			stocks[i].ticker,
+			datedmonths.tm_mon, datedmonths.tm_mday, datedmonths.tm_year,
+			dated.tm_mon, dated.tm_mday, dated.tm_year);
 
 		FILE *f = popen("cat daily.sample", "r");
 		if (!f) die("Failed to fetch data\n");
 
-		
+		import(f, stocks[i].daily);
+
+		pclose(f);
+
+		// And weekly
+
+		sprintf(buf, "wget -q -O - 'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=d&ignore=.csv'",
+			stocks[i].ticker,
+			datedyears.tm_mon, datedyears.tm_mday, datedyears.tm_year,
+			dated.tm_mon, dated.tm_mday, dated.tm_year);
+
+		f = popen("cat weekly.sample", "r");
+		if (!f) die("Failed to fetch data\n");
+
+		import(f, stocks[i].weekly);
 
 		pclose(f);
 	}

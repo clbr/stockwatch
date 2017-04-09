@@ -5,7 +5,9 @@
 
 struct stockval {
 	float val;
-	time_t date;
+	u16 year;
+	u8 month;
+	u8 day;
 };
 
 struct stock {
