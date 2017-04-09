@@ -15,6 +15,11 @@ struct stock {
 
 	std::vector<stockval> weekly;
 	std::vector<stockval> daily;
+
+	bool operator < (const stock &other) const {
+		// TODO compare daily value
+		return target < other.target;
+	}
 };
 
 extern std::vector<stock> stocks;

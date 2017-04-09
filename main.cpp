@@ -60,7 +60,9 @@ static void load() {
 	fclose(f);
 
 	// Fetch data TODO
-	// Sort TODO
+
+	// Sort
+	std::sort(stocks.begin(), stocks.end());
 
 	u32 i;
 	const u32 max = stocks.size();

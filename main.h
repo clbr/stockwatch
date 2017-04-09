@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <lrtypes.h>
 
+#include <algorithm>
+
 #include "ui.h"
 #include "data.h"
 
