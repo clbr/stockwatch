@@ -147,6 +147,9 @@ static void load() {
 	u32 i;
 	const u32 max = stocks.size();
 	for (i = 0; i < max; i++) {
+		if (stocks[i].daily.size() < 5)
+			continue;
+
 		Fl_Pack *p = new clickpack(0, 0, 180, 20);
 		p->type(Fl_Pack::HORIZONTAL);
 		p->box(FL_SHADOW_FRAME);
@@ -154,10 +157,12 @@ static void load() {
 		Fl_Box *b = new Fl_Box(0, 0, 70, 20, stocks[i].ticker);
 		b->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 		b->labelfont(FL_HELVETICA | FL_BOLD);
+		if (stocks[i].daily[0].val < stocks[i].target)
+			b->labelcolor(FL_DARK_GREEN);
 		//b->box(FL_UP_BOX);
 
 		char buf[32];
-		sprintf(buf, "%.2f", stocks[i].target);
+		sprintf(buf, "%.2f", stocks[i].daily[0].val);
 
 		b = new Fl_Box(0, 0, 55, 20);
 		b->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
@@ -165,8 +170,7 @@ static void load() {
 		b->copy_label(buf);
 		//b->box(FL_UP_BOX);
 
-		// TODO last day
-		const float val = rand() % 2 ? 4.45 : -4.45;
+		const float val = stocks[i].daily[0].val * 100 / stocks[i].daily[1].val - 100;
 		sprintf(buf, "%.2f%%", val);
 
 		b = new Fl_Box(0, 0, 55, 20);
