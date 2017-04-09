@@ -27,6 +27,35 @@ static void picked(Fl_Widget *, void *data) {
 	printf("clicked %u\n", num);
 }
 
+static void fetch() {
+
+	u32 i;
+	const u32 max = stocks.size();
+	char buf[PATH_MAX];
+
+	const time_t now = time(NULL);
+	struct tm dated;
+	localtime_r(&now, &dated);
+
+	const u32 day = dated.tm_mday;
+	const u32 month = dated.tm_mon;
+
+	struct tm tmptime;
+
+	scroll->hide();
+
+	for (i = 0; i < max; i++) {
+		Fl::check();
+
+		FILE *f = popen("cat daily.sample", "r");
+		if (!f) die("Failed to fetch data\n");
+
+		
+
+		pclose(f);
+	}
+}
+
 static void load() {
 
 	status->label("Loading...");
@@ -59,7 +88,8 @@ static void load() {
 
 	fclose(f);
 
-	// Fetch data TODO
+	// Fetch data
+	fetch();
 
 	// Sort
 	std::sort(stocks.begin(), stocks.end());
@@ -108,6 +138,7 @@ static void load() {
 	}
 
 	status->label("");
+	scroll->show();
 }
 
 int main(int argc, char **argv) {
