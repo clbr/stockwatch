@@ -9,4 +9,8 @@
 #include "ui.h"
 #include "data.h"
 
+// helpers.cpp
+void die(const char fmt[], ...);
+void nukenewline(char buf[]);
+
 #endif
