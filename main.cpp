@@ -150,7 +150,7 @@ static void load() {
 		if (stocks[i].daily.size() < 5)
 			continue;
 
-		Fl_Pack *p = new clickpack(0, 0, 180, 20);
+		Fl_Pack *p = new clickpack(0, 0, 200, 20);
 		p->type(Fl_Pack::HORIZONTAL);
 		p->box(FL_SHADOW_FRAME);
 
@@ -173,7 +173,7 @@ static void load() {
 		const float val = stocks[i].daily[0].val * 100 / stocks[i].daily[1].val - 100;
 		sprintf(buf, "%.2f%%", val);
 
-		b = new Fl_Box(0, 0, 55, 20);
+		b = new Fl_Box(0, 0, 60, 20);
 		b->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 		b->labelcolor(val < 0 ? FL_DARK_RED : FL_DARK_GREEN);
 		b->labelfont(FL_HELVETICA | FL_BOLD);
