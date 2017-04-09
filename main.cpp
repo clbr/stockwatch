@@ -133,7 +133,13 @@ static void load() {
 	fclose(f);
 
 	// Fetch data
+	struct timeval before, after;
+	gettimeofday(&before, NULL);
 	fetch();
+	gettimeofday(&after, NULL);
+
+	timersub(&after, &before, &after);
+	printf("Fetching data took %lu ms\n", after.tv_sec * 1000 + after.tv_usec / 1000);
 
 	// Sort
 	std::sort(stocks.begin(), stocks.end());
