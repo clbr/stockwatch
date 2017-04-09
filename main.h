@@ -12,6 +12,7 @@
 
 #include "ui.h"
 #include "data.h"
+#include "stockchart.h"
 
 // helpers.cpp
 void die(const char fmt[], ...);

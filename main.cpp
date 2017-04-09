@@ -218,9 +218,9 @@ int main(int argc, char **argv) {
 		{
 			Fl_Tabs *tabs = new Fl_Tabs(215, 4, 885, 417);
 
-			Fl_Chart *o = new Fl_Chart(215, 38, 885, 383, "5 years");
+			stockchart *o = new stockchart(215, 38, 885, 383, "5 years");
 
-			o = new Fl_Chart(215, 38, 885, 383, "30 days");
+			o = new stockchart(215, 38, 885, 383, "30 days");
 
 			tabs->end();
 
