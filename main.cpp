@@ -18,9 +18,9 @@ public:
 	}
 };
 
-Fl_Scroll *scroll = (Fl_Scroll *) 0;
-Fl_Pack *list = (Fl_Pack *) 0;
-Fl_Box *status = (Fl_Box *) 0;
+static Fl_Scroll *scroll = (Fl_Scroll *) 0;
+static Fl_Pack *list = (Fl_Pack *) 0;
+static Fl_Box *status = (Fl_Box *) 0;
 
 static void picked(Fl_Widget *, void *data) {
 
