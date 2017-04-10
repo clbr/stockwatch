@@ -147,6 +147,21 @@ void stockchart::draw() {
 	fl_color(FL_DARK_GREEN);
 	const u32 tgty = dy + calcy(target, min, max, dh);
 	fl_line(dx, tgty, dx + dw - 1, tgty);
+
+	// Points
+	fl_color(FL_RED);
+	for (i = 1; i < maxsize; i++) {
+		const stockval &cur = (*src)[i - 1];
+		const stockval &prev = (*src)[i];
+
+		const u32 prevy = dy + calcy(prev.val, min, max, dh);
+		const u32 cury = dy + calcy(cur.val, min, max, dh);
+
+		const u32 prevx = dx + (dw - i * pointw);
+		const u32 curx = dx + (dw - (i - 1) * pointw);
+
+		fl_line(curx, cury, prevx, prevy);
+	}
 }
 
 void stockchart::setsource(const std::vector<stockval> * const vec, const float tgt) {
