@@ -1,5 +1,6 @@
 #include "main.h"
 #include <FL/fl_draw.H>
+#include <FL/Fl_Tooltip.H>
 
 static u32 calcy(const float val, const float min, const float max, const u32 dh) {
 	return (1 - ((val - min) / (max - min))) * dh;
@@ -198,6 +199,8 @@ void stockchart::setsource(const std::vector<stockval> * const vec, const float 
 
 		if (min < 0)
 			min = 0;
+	} else {
+		movable = 0;
 	}
 
 	redraw();
@@ -205,12 +208,47 @@ void stockchart::setsource(const std::vector<stockval> * const vec, const float 
 
 int stockchart::handle(int e) {
 
+	static char tipbuf[64], oldtip[64];
+
 	switch (e) {
 		case FL_ENTER:
 		case FL_LEAVE:
 			return 1;
 		break;
 		case FL_MOVE:
+			if (movable) {
+				const u32 mx = Fl::event_x();
+				const u32 my = Fl::event_y();
+
+				if (mx > dx && my > dy &&
+					mx < dx + dw &&
+					my < dy + dh) {
+
+					const u32 maxsize = src->size();
+					const float pointw = dw / (float) maxsize;
+					const u32 hovering = (mx - dx + pointw / 2) / pointw;
+
+					if (hovering < maxsize) {
+						const u32 i = maxsize - 1 - hovering;
+						const stockval &cur = (*src)[i];
+						memcpy(oldtip, tipbuf, 64);
+						sprintf(tipbuf, "%u.%u %.2f",
+							cur.day, cur.month,
+							cur.val);
+
+						if (strcmp(oldtip, tipbuf) != 0) {
+							Fl_Tooltip::exit(NULL);
+							Fl_Tooltip::enter_area(this,
+								dx, dx,
+								dw, dh,
+								tipbuf);
+						}
+					}
+				} else {
+					tooltip("");
+				}
+			}
+			return 1;
 		break;
 	}
 
