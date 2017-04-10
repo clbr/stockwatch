@@ -30,7 +30,13 @@ static void picked(Fl_Widget *, void *data) {
 	yearchart->setsource(&stocks[num].weekly, stocks[num].target);
 	daychart->setsource(&stocks[num].daily, stocks[num].target);
 
-	status->label(stocks[num].ticker);
+	char buf[384];
+	sprintf(buf, "%s\n\n%s\ntarget %.2f",
+		stocks[num].ticker,
+		stocks[num].comment,
+		stocks[num].target);
+
+	status->copy_label(buf);
 }
 
 static void import(FILE * const f, std::vector<stockval> &vec) {
@@ -237,7 +243,7 @@ int main(int argc, char **argv) {
 			tabs->value(o);
 		}		// Fl_Chart* o
 		{
-			status = new Fl_Box(535, 599, 215, 92);
+			status = new Fl_Box(535 - 100, 599, 215 + 200, 92);
 			Fl_Group::current()->resizable(status);
 		}		// Fl_Box* status
 		o->size_range(1105, 855);
