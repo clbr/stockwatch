@@ -80,7 +80,6 @@ static void fetch() {
 
 	scroll->hide();
 
-	// TODO real data
 	for (i = 0; i < max; i++) {
 		Fl::check();
 
@@ -89,7 +88,8 @@ static void fetch() {
 			datedmonths.tm_mon, datedmonths.tm_mday, datedmonths.tm_year + 1900,
 			dated.tm_mon, dated.tm_mday, dated.tm_year + 1900);
 
-		FILE *f = popen("cat daily.sample", "r");
+//		FILE *f = popen("cat daily.sample", "r");
+		FILE *f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
 		import(f, stocks[i].daily);
@@ -103,7 +103,8 @@ static void fetch() {
 			datedyears.tm_mon, datedyears.tm_mday, datedyears.tm_year + 1900,
 			dated.tm_mon, dated.tm_mday, dated.tm_year + 1900);
 
-		f = popen("cat weekly.sample", "r");
+//		f = popen("cat weekly.sample", "r");
+		f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
 		import(f, stocks[i].weekly);
