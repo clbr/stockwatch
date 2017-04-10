@@ -1,6 +1,10 @@
 #include "main.h"
 #include <FL/fl_draw.H>
 
+static u32 calcy(const float val, const float min, const float max, const u32 dh) {
+	return (1 - ((val - min) / (max - min))) * dh;
+}
+
 void stockchart::draw() {
 
 	u32 i;
@@ -141,7 +145,7 @@ void stockchart::draw() {
 
 	// Target line
 	fl_color(FL_DARK_GREEN);
-	const u32 tgty = dy + (1 - ((target - min) / (max - min))) * dh;
+	const u32 tgty = dy + calcy(target, min, max, dh);
 	fl_line(dx, tgty, dx + dw - 1, tgty);
 }
 
