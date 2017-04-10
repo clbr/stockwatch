@@ -151,8 +151,11 @@ static void load() {
 	u32 i;
 	const u32 max = stocks.size();
 	for (i = 0; i < max; i++) {
-		if (stocks[i].daily.size() < 5)
+		if (stocks[i].daily.size() < 5) {
+			fl_alert("Failed to fetch data for %s",
+				stocks[i].ticker);
 			continue;
+		}
 
 		Fl_Pack *p = new clickpack(0, 0, 200, 20);
 		p->type(Fl_Pack::HORIZONTAL);
