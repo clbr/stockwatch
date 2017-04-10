@@ -30,7 +30,34 @@ void stockchart::setsource(const std::vector<stockval> * const vec, const float 
 	target = tgt;
 
 	if (src) {
-		// TODO calculate min and max
+		// calculate min and max
+		const u32 maxsize = src->size();
+		u32 i;
+
+		min = (*src)[0].val;
+		max = (*src)[0].val;
+
+		for (i = 1; i < maxsize; i++) {
+			const float v = (*src)[i].val;
+			if (v < min)
+				min = v;
+			if (v > max)
+				max = v;
+		}
+
+		// Target
+		if (target < min)
+			min = target;
+		if (target > max)
+			max = target;
+
+		// Expand
+		const float area = (max - min) / 6;
+		min -= area;
+		max += area;
+
+		if (min < 0)
+			min = 0;
 	}
 
 	redraw();
