@@ -126,7 +126,7 @@ void stockchart::draw() {
 	}
 
 	// Horizontal measuring lines
-	u32 range = (max - min) * 100;
+	float range = (max - min) * 100;
 	range /= 6;
 
 	const float pointh = dh / (float) 6;
