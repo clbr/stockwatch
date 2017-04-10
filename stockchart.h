@@ -11,11 +11,11 @@ public:
 
 	void draw();
 
-	void setsource(std::vector<stockval> *vec, const float tgt);
+	void setsource(const std::vector<stockval> * const vec, const float tgt);
 
 private:
 	float min, max, target;
-	std::vector<stockval> *src;
+	const std::vector<stockval> *src;
 };
 
 #endif

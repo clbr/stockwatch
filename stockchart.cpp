@@ -25,7 +25,7 @@ void stockchart::draw() {
 		return;
 }
 
-void stockchart::setsource(std::vector<stockval> *vec, const float tgt) {
+void stockchart::setsource(const std::vector<stockval> * const vec, const float tgt) {
 	src = vec;
 	target = tgt;
 
