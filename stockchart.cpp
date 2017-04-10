@@ -100,6 +100,7 @@ void stockchart::draw() {
 				fl_color(FL_BLACK);
 
 				struct tm timer;
+				memset(&timer, 0, sizeof(struct tm));
 				timer.tm_mon = cur.month - 1;
 
 				strftime(tmp, 32, "%b", &timer);
