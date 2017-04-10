@@ -200,6 +200,7 @@ static void load() {
 
 	status->label("");
 	scroll->show();
+	picked(NULL, 0);
 }
 
 int main(int argc, char **argv) {
