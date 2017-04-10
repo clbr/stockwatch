@@ -120,6 +120,24 @@ void stockchart::draw() {
 			fl_line(x, dy, x, dy + dh - 2);
 		}
 	}
+
+	// Horizontal measuring lines
+	u32 range = (max - min) * 100;
+	range /= 6;
+
+	const float pointh = dh / (float) 6;
+
+	for (i = 1; i < 6; i++) {
+		const u32 y = dy + i * pointh;
+
+		fl_color(FL_GRAY0 + 18);
+		fl_line(dx, y, dx + dw - 1, y);
+
+		fl_color(FL_BLACK);
+		sprintf(tmp, "%.2f", min + range * (6 - i) / 100.0f);
+		fl_measure(tmp, tw, th, 0);
+		fl_draw(tmp, dx - tw - 3, y + th / 3);
+	}
 }
 
 void stockchart::setsource(const std::vector<stockval> * const vec, const float tgt) {
