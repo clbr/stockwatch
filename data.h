@@ -22,8 +22,8 @@ struct stock {
 		if (!daily.size() || !other.daily.size())
 			return 0;
 
-		const float mydiff = daily[0].val - target;
-		const float otherdiff = other.daily[0].val - other.target;
+		const float mydiff = daily[0].val / target;
+		const float otherdiff = other.daily[0].val / other.target;
 
 		return mydiff < otherdiff;
 	}
