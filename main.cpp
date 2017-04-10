@@ -29,6 +29,8 @@ static void picked(Fl_Widget *, void *data) {
 
 	yearchart->setsource(&stocks[num].weekly, stocks[num].target);
 	daychart->setsource(&stocks[num].daily, stocks[num].target);
+
+	status->label(stocks[num].ticker);
 }
 
 static void import(FILE * const f, std::vector<stockval> &vec) {
