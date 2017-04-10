@@ -157,8 +157,8 @@ void stockchart::draw() {
 		const u32 prevy = dy + calcy(prev.val, min, max, dh);
 		const u32 cury = dy + calcy(cur.val, min, max, dh);
 
-		const u32 prevx = dx + (dw - i * pointw);
-		const u32 curx = dx + (dw - (i - 1) * pointw);
+		const u32 prevx = dx + (dw - (i + 1) * pointw);
+		const u32 curx = dx + (dw - i * pointw);
 
 		fl_line(curx, cury, prevx, prevy);
 	}
