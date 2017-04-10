@@ -23,6 +23,20 @@ void stockchart::draw() {
 
 	if (!src)
 		return;
+
+	dx += 48;
+	dw -= 48;
+
+	dh -= 24;
+
+	fl_color(FL_BLACK);
+	fl_rect(dx, dy - 1, dw + 1, dh);
+
+	// Data area
+	dx++;
+	dy++;
+	dw -= 2;
+	dh -= 2;
 }
 
 void stockchart::setsource(const std::vector<stockval> * const vec, const float tgt) {
