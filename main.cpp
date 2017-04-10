@@ -171,7 +171,7 @@ static void load() {
 		p->box(FL_SHADOW_FRAME);
 
 		Fl_Box *b = new Fl_Box(0, 0, 70, 20, stocks[i].ticker);
-		b->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+		b->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
 		b->labelfont(FL_HELVETICA | FL_BOLD);
 		if (stocks[i].daily[0].val < stocks[i].target)
 			b->labelcolor(FL_DARK_GREEN);
