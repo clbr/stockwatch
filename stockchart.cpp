@@ -15,7 +15,6 @@ void stockchart::draw() {
 	bw = w() - 10;
 	bh = h() - 10;
 
-	u32 dx, dy, dw, dh;
 	dx = bx + 1;
 	dy = by + 1;
 	dw = bw - 2;
@@ -162,6 +161,8 @@ void stockchart::draw() {
 
 		fl_line(curx, cury, prevx, prevy);
 	}
+
+	movable = 1;
 }
 
 void stockchart::setsource(const std::vector<stockval> * const vec, const float tgt) {
@@ -200,4 +201,18 @@ void stockchart::setsource(const std::vector<stockval> * const vec, const float 
 	}
 
 	redraw();
+}
+
+int stockchart::handle(int e) {
+
+	switch (e) {
+		case FL_ENTER:
+		case FL_LEAVE:
+			return 1;
+		break;
+		case FL_MOVE:
+		break;
+	}
+
+	return Fl_Widget::handle(e);
 }
