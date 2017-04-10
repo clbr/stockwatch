@@ -86,7 +86,39 @@ void stockchart::draw() {
 			}
 		}
 	} else {
-		fl_color(FL_GRAY0 + 18);
+		for (i = 1; i < maxsize; i++) {
+			const stockval &cur = (*src)[i - 1];
+			const stockval &prev = (*src)[i];
+
+			const u32 x = dx + (dw - i * pointw);
+
+			if (cur.month != prev.month) {
+				fl_color(FL_BLACK);
+
+				struct tm timer;
+				timer.tm_mon = cur.month - 1;
+
+				strftime(tmp, 32, "%b", &timer);
+				fl_measure(tmp, tw, th, 0);
+				fl_draw(tmp, x - tw / 2,
+					dy + dh + 6 - fl_descent() + fl_height());
+
+				fl_color(FL_GRAY0 + 9);
+			} else {
+				fl_color(FL_GRAY0 + 18);
+
+				fl_font(FL_HELVETICA, 11);
+				sprintf(tmp, "%u", cur.day);
+				fl_measure(tmp, tw, th, 0);
+				fl_draw(tmp, x - tw / 2,
+					dy + dh + 1 - fl_descent() + fl_height());
+
+				fl_font(FL_HELVETICA, 14);
+			}
+
+			// Draw line here
+			fl_line(x, dy, x, dy + dh - 2);
+		}
 	}
 }
 
