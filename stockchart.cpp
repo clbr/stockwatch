@@ -138,6 +138,11 @@ void stockchart::draw() {
 		fl_measure(tmp, tw, th, 0);
 		fl_draw(tmp, dx - tw - 3, y + th / 3);
 	}
+
+	// Target line
+	fl_color(FL_DARK_GREEN);
+	const u32 tgty = dy + (1 - ((target - min) / (max - min))) * dh;
+	fl_line(dx, tgty, dx + dw - 1, tgty);
 }
 
 void stockchart::setsource(const std::vector<stockval> * const vec, const float tgt) {
