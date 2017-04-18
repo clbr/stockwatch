@@ -83,7 +83,7 @@ static void fetch() {
 	for (i = 0; i < max; i++) {
 		Fl::check();
 
-		sprintf(buf, "wget -q -O - 'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=d&ignore=.csv'",
+		sprintf(buf, "wget --no-check-cert -q -O - 'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=d&ignore=.csv'",
 			stocks[i].ticker,
 			datedmonths.tm_mon, datedmonths.tm_mday, datedmonths.tm_year + 1900,
 			dated.tm_mon, dated.tm_mday, dated.tm_year + 1900);
@@ -98,7 +98,7 @@ static void fetch() {
 
 		// And weekly
 
-		sprintf(buf, "wget -q -O - 'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=w&ignore=.csv'",
+		sprintf(buf, "wget --no-check-cert -q -O - 'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=w&ignore=.csv'",
 			stocks[i].ticker,
 			datedyears.tm_mon, datedyears.tm_mday, datedyears.tm_year + 1900,
 			dated.tm_mon, dated.tm_mday, dated.tm_year + 1900);
