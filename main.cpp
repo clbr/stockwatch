@@ -3,6 +3,7 @@
 std::vector<stock> stocks;
 
 static stockchart *daychart, *yearchart;
+static const char *crumb;
 
 class clickpack: public Fl_Pack {
 public:
@@ -66,15 +67,11 @@ static void fetch() {
 	const u32 max = stocks.size();
 
 	const time_t now = time(NULL);
-	struct tm dated, datedmonths, datedyears;
-	localtime_r(&now, &dated);
 
 	const u32 secs_per_day = 60 * 60 * 24;
 
 	const time_t monthback = now - secs_per_day * 30;
 	const time_t yearsback = now - secs_per_day * 365 * 5;
-	localtime_r(&monthback, &datedmonths);
-	localtime_r(&yearsback, &datedyears);
 
 	char buf[PATH_MAX];
 
@@ -84,11 +81,11 @@ static void fetch() {
 		Fl::check();
 
 		#define CMD "wget --no-check-cert --timeout 10 -q -O - "
+		#define URL "https://query1.finance.yahoo.com/v7/finance/download/"
 
-		sprintf(buf, CMD "'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=d&ignore=.csv'",
+		sprintf(buf, CMD "'" URL "%s?period1=%lu&period2=%lu&interval=1d&events=history&crumb=%s'",
 			stocks[i].ticker,
-			datedmonths.tm_mon, datedmonths.tm_mday, datedmonths.tm_year + 1900,
-			dated.tm_mon, dated.tm_mday, dated.tm_year + 1900);
+			monthback, now, crumb);
 
 //		FILE *f = popen("cat daily.sample", "r");
 		FILE *f = popen(buf, "r");
@@ -100,10 +97,9 @@ static void fetch() {
 
 		// And weekly
 
-		sprintf(buf, CMD "'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=w&ignore=.csv'",
+		sprintf(buf, CMD "'" URL "%s?period1=%lu&period2=%lu&interval=1w&events=history&crumb=%s'",
 			stocks[i].ticker,
-			datedyears.tm_mon, datedyears.tm_mday, datedyears.tm_year + 1900,
-			dated.tm_mon, dated.tm_mday, dated.tm_year + 1900);
+			yearsback, now, crumb);
 
 //		f = popen("cat weekly.sample", "r");
 		f = popen(buf, "r");
@@ -112,6 +108,7 @@ static void fetch() {
 		import(f, stocks[i].weekly);
 
 		#undef CMD
+		#undef URL
 
 		pclose(f);
 	}
@@ -219,6 +216,13 @@ static void load() {
 int main(int argc, char **argv) {
 
 	Fl::scheme("gtk+");
+
+	if (argc < 2) {
+		printf("Usage: %s crumb, from https://finance.yahoo.com/quote/AAPL/history?p=AAPL\n",
+			argv[1]);
+		return 1;
+	}
+	crumb = argv[1];
 
 	Fl_Double_Window *w;
 	{
