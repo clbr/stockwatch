@@ -39,43 +39,71 @@ static void picked(Fl_Widget *, void *data) {
 	status->copy_label(buf);
 }
 
-static void import(FILE * const f, std::vector<stockval> &vec) {
+static const char months[12][4] = {
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec",
+};
+
+static void import(FILE * const f, std::vector<stockval> &vec, const bool weekly = false) {
 
 	char buf[PATH_MAX];
+	char month[4] = "aaa";
+
+	unsigned i = 0;
 
 	while (fgets(buf, PATH_MAX, f)) {
-		if (buf[0] != '2')
+		if (!isdigit(buf[0]))
 			continue;
+
+		if (weekly) {
+			// Google only gives daily values, skip four
+			i++;
+			if (i % 5)
+				continue;
+		}
 
 		nukenewline(buf);
 
 		stockval sv;
 
-		if (sscanf(buf, "%hu-%hhu-%hhu,%f", &sv.year, &sv.month, &sv.day, &sv.val) != 4) {
+		if (sscanf(buf, "%hhu-%3c-%hu,%f", &sv.day, month, &sv.year, &sv.val) != 4) {
 			printf("Couldn't import data line '%s'\n", buf);
 			break;
 		}
+
+		if (sv.year < 50)
+			sv.year += 2000;
+		else
+			sv.year += 1900;
+
+		// Get month
+		sv.month = 13;
+		u8 m;
+		for (m = 0; m < 12; m++) {
+			if (!strcmp(months[m], month)) {
+				sv.month = m;
+				break;
+			}
+		}
+
+		if (sv.month >= 12)
+			continue;
 
 		vec.push_back(sv);
 	}
 }
 
 static void fetch() {
-
-	static const char months[12][4] = {
-		"Jan",
-		"Feb",
-		"Mar",
-		"Apr",
-		"May",
-		"Jun",
-		"Jul",
-		"Aug",
-		"Sep",
-		"Oct",
-		"Nov",
-		"Dec",
-	};
 
 	u32 i;
 	const u32 max = stocks.size();
@@ -121,11 +149,11 @@ static void fetch() {
 			months[datedyears.tm_mon], datedyears.tm_mday, datedyears.tm_year + 1900,
 			months[dated.tm_mon], dated.tm_mday, dated.tm_year + 1900);
 
-//		f = popen("cat weekly.sample", "r");
+//		f = popen("cat daily.sample", "r");
 		f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
-		import(f, stocks[i].weekly);
+		import(f, stocks[i].weekly, true);
 
 		#undef CMD
 		#undef URL
