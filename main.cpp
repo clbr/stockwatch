@@ -62,6 +62,21 @@ static void import(FILE * const f, std::vector<stockval> &vec) {
 
 static void fetch() {
 
+	static const char months[12][4] = {
+		"Jan",
+		"Feb",
+		"Mar",
+		"Apr",
+		"May",
+		"Jun",
+		"Jul",
+		"Aug",
+		"Sep",
+		"Oct",
+		"Nov",
+		"Dec",
+	};
+
 	u32 i;
 	const u32 max = stocks.size();
 
@@ -84,11 +99,12 @@ static void fetch() {
 		Fl::check();
 
 		#define CMD "wget --no-check-cert --timeout 10 -q -O - "
+		#define URL "'http://www.google.com/finance/historical?q=%s&startdate=%s+%u%%2C+%u&enddate=%s+%u%%2C+%u&histperiod=daily&output=csv'"
 
-		sprintf(buf, CMD "'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=d&ignore=.csv'",
+		sprintf(buf, CMD URL,
 			stocks[i].ticker,
-			datedmonths.tm_mon, datedmonths.tm_mday, datedmonths.tm_year + 1900,
-			dated.tm_mon, dated.tm_mday, dated.tm_year + 1900);
+			months[datedmonths.tm_mon], datedmonths.tm_mday, datedmonths.tm_year + 1900,
+			months[dated.tm_mon], dated.tm_mday, dated.tm_year + 1900);
 
 //		FILE *f = popen("cat daily.sample", "r");
 		FILE *f = popen(buf, "r");
@@ -100,10 +116,10 @@ static void fetch() {
 
 		// And weekly
 
-		sprintf(buf, CMD "'http://chart.finance.yahoo.com/table.csv?s=%s&a=%u&b=%u&c=%u&d=%u&e=%u&f=%u&g=w&ignore=.csv'",
+		sprintf(buf, CMD URL,
 			stocks[i].ticker,
-			datedyears.tm_mon, datedyears.tm_mday, datedyears.tm_year + 1900,
-			dated.tm_mon, dated.tm_mday, dated.tm_year + 1900);
+			months[datedyears.tm_mon], datedyears.tm_mday, datedyears.tm_year + 1900,
+			months[dated.tm_mon], dated.tm_mday, dated.tm_year + 1900);
 
 //		f = popen("cat weekly.sample", "r");
 		f = popen(buf, "r");
@@ -112,6 +128,7 @@ static void fetch() {
 		import(f, stocks[i].weekly);
 
 		#undef CMD
+		#undef URL
 
 		pclose(f);
 	}
