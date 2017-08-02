@@ -78,7 +78,7 @@ static void import(FILE * const f, std::vector<stockval> &vec, const bool weekly
 
 		if (sscanf(buf, "%hhu-%3c-%hu,%f", &sv.day, month, &sv.year, &sv.val) != 4) {
 			printf("Couldn't import data line '%s'\n", buf);
-			break;
+			continue;
 		}
 
 		if (sv.year < 50)
