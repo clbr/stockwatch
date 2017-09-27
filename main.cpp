@@ -1,4 +1,5 @@
 #include "main.h"
+#include <glob.h>
 
 std::vector<stock> stocks;
 
@@ -103,10 +104,36 @@ static void import(FILE * const f, std::vector<stockval> &vec, const bool weekly
 	}
 }
 
+static void getkey(char buf[17]) {
+
+	glob_t globs;
+	globs.gl_offs = 0;
+
+	if (glob("~/alphavantage-key", GLOB_TILDE, NULL, &globs) != 0)
+		die("Failed to glob\n");
+	if (globs.gl_pathc != 1)
+		die("API key not found\n");
+
+	FILE *f = fopen(globs.gl_pathv[0], "r");
+	if (!f)
+		die("Can't open api key\n");
+
+	if (fread(buf, 16, 1, f) != 1)
+		die("Invalid api key\n");
+
+	buf[16] = '\0';
+
+	fclose(f);
+	globfree(&globs);
+}
+
 static void fetch() {
 
 	u32 i;
 	const u32 max = stocks.size();
+
+	char apikey[17];
+	getkey(apikey);
 
 	const time_t now = time(NULL);
 	struct tm dated, datedmonths, datedyears;
