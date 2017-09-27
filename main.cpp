@@ -40,25 +40,10 @@ static void picked(Fl_Widget *, void *data) {
 	status->copy_label(buf);
 }
 
-static const char months[12][4] = {
-	"Jan",
-	"Feb",
-	"Mar",
-	"Apr",
-	"May",
-	"Jun",
-	"Jul",
-	"Aug",
-	"Sep",
-	"Oct",
-	"Nov",
-	"Dec",
-};
-
-static void import(FILE * const f, std::vector<stockval> &vec, const bool weekly = false) {
+static void import(FILE * const f, std::vector<stockval> &vec, const struct tm * const until,
+	const bool weekly = false) {
 
 	char buf[PATH_MAX];
-	char month[4] = "aaa";
 
 	unsigned i = 0;
 
@@ -77,27 +62,18 @@ static void import(FILE * const f, std::vector<stockval> &vec, const bool weekly
 
 		stockval sv;
 
-		if (sscanf(buf, "%hhu-%3c-%hu,%f", &sv.day, month, &sv.year, &sv.val) != 4) {
+		if (sscanf(buf, "%hu-%hhu-%hhu,%f", &sv.year, &sv.month, &sv.day, &sv.val) != 4) {
 			printf("Couldn't import data line '%s'\n", buf);
 			continue;
 		}
 
-		if (sv.year < 50)
-			sv.year += 2000;
-		else
-			sv.year += 1900;
-
-		// Get month
-		sv.month = 13;
-		u8 m;
-		for (m = 0; m < 12; m++) {
-			if (!strcmp(months[m], month)) {
-				sv.month = m;
-				break;
-			}
-		}
-
-		if (sv.month >= 12)
+		// Skip too old results
+		if (sv.year < until->tm_year + 1900)
+			continue;
+		if (sv.year == until->tm_year + 1900 && sv.month < until->tm_mon + 1)
+			continue;
+		if (sv.year == until->tm_year + 1900 && sv.month == until->tm_mon + 1 &&
+			sv.day < until->tm_mday)
 			continue;
 
 		vec.push_back(sv);
@@ -154,18 +130,17 @@ static void fetch() {
 		Fl::check();
 
 		#define CMD "wget --no-check-cert --timeout 10 -q -O - "
-		#define URL "'http://www.google.com/finance/historical?q=%s&startdate=%s+%u%%2C+%u&enddate=%s+%u%%2C+%u&histperiod=daily&output=csv'"
+		#define URL "'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=%s&apikey=%s&datatype=csv'"
 
 		sprintf(buf, CMD URL,
 			stocks[i].ticker,
-			months[datedmonths.tm_mon], datedmonths.tm_mday, datedmonths.tm_year + 1900,
-			months[dated.tm_mon], dated.tm_mday, dated.tm_year + 1900);
+			apikey);
 
 //		FILE *f = popen("cat daily.sample", "r");
 		FILE *f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
-		import(f, stocks[i].daily);
+		import(f, stocks[i].daily, &datedmonths);
 
 		pclose(f);
 
@@ -173,14 +148,13 @@ static void fetch() {
 
 		sprintf(buf, CMD URL,
 			stocks[i].ticker,
-			months[datedyears.tm_mon], datedyears.tm_mday, datedyears.tm_year + 1900,
-			months[dated.tm_mon], dated.tm_mday, dated.tm_year + 1900);
+			apikey);
 
-//		f = popen("cat daily.sample", "r");
+//		f = popen("cat weekly.sample", "r");
 		f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
-		import(f, stocks[i].weekly, true);
+		import(f, stocks[i].weekly, &datedyears, true);
 
 		#undef CMD
 		#undef URL
