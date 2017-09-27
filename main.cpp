@@ -145,6 +145,8 @@ static void fetch() {
 		pclose(f);
 
 		// And weekly
+		#undef URL
+		#define URL "'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=%s&apikey=%s&datatype=csv'"
 
 		sprintf(buf, CMD URL,
 			stocks[i].ticker,
