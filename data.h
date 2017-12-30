@@ -19,8 +19,12 @@ struct stock {
 	std::vector<stockval> daily;
 
 	bool operator < (const stock &other) const {
-		if (!daily.size() || !other.daily.size())
-			return 0;
+		if (daily.size() < 5 && other.daily.size() < 5)
+			return false;
+		if (daily.size() < 5)
+			return true;
+		if (other.daily.size() < 5)
+			return false;
 
 		const float mydiff = daily[0].val / target;
 		const float otherdiff = other.daily[0].val / other.target;
