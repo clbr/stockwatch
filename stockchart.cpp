@@ -27,7 +27,7 @@ void stockchart::draw() {
 	fl_color(FL_WHITE);
 	fl_rectf(dx, dy, dw, dh);
 
-	if (!src)
+	if (!src || !src->size())
 		return;
 
 	const u32 maxsize = src->size();
