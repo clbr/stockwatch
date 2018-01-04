@@ -4,6 +4,7 @@
 std::vector<stock> stocks;
 
 static stockchart *daychart, *yearchart;
+static Fl_Double_Window *win;
 
 class clickpack: public Fl_Pack {
 public:
@@ -106,6 +107,7 @@ static void getkey(char buf[17]) {
 static void fetch() {
 
 	u32 i;
+	char titlebuf[64];
 	const u32 max = stocks.size();
 
 	char apikey[17];
@@ -127,6 +129,9 @@ static void fetch() {
 	scroll->hide();
 
 	for (i = 0; i < max; i++) {
+		sprintf(titlebuf, "Fetching %s %u/%u", stocks[i].ticker, i + 1, max);
+		win->label(titlebuf);
+
 		Fl::check();
 
 		#define CMD "wget --no-check-cert --timeout 10 -q -O - "
@@ -148,6 +153,8 @@ static void fetch() {
 		#undef URL
 		#define URL "'https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=%s&apikey=%s&datatype=csv'"
 
+		Fl::check();
+
 		sprintf(buf, CMD URL,
 			stocks[i].ticker,
 			apikey);
@@ -163,6 +170,8 @@ static void fetch() {
 
 		pclose(f);
 	}
+
+	win->label("StockWatch");
 }
 
 static void load() {
@@ -268,11 +277,10 @@ int main(int argc, char **argv) {
 
 	Fl::scheme("gtk+");
 
-	Fl_Double_Window *w;
 	{
 		Fl_Double_Window *o =
 		    new Fl_Double_Window(1105, 855, "StockWatch");
-		w = o;
+		win = o;
 		{
 			scroll = new Fl_Scroll(0, 0, 210, 855);
 			scroll->type(Fl_Scroll::VERTICAL_ALWAYS);
@@ -302,7 +310,7 @@ int main(int argc, char **argv) {
 		o->size_range(1105, 855);
 		o->end();
 	}			// Fl_Double_Window* o
-	w->show(argc, argv);
+	win->show(argc, argv);
 
 	load();
 
