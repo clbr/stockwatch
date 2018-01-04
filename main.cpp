@@ -270,7 +270,15 @@ static void load() {
 
 	status->label("");
 	scroll->show();
-	picked(NULL, 0);
+
+	// Ignore missing ones
+	for (i = 0; i < max; i++) {
+		if (stocks[i].daily.size() < 5)
+			continue;
+		break;
+	}
+
+	picked(NULL, (void *) i);
 }
 
 int main(int argc, char **argv) {
