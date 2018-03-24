@@ -41,23 +41,13 @@ static void picked(Fl_Widget *, void *data) {
 	status->copy_label(buf);
 }
 
-static void import(FILE * const f, std::vector<stockval> &vec, const struct tm * const until,
-	const bool weekly = false) {
+static void import(FILE * const f, std::vector<stockval> &vec, const struct tm * const until) {
 
 	char buf[PATH_MAX];
-
-	unsigned i = 0;
 
 	while (fgets(buf, PATH_MAX, f)) {
 		if (!isdigit(buf[0]))
 			continue;
-
-		if (weekly) {
-			// Google only gives daily values, skip four
-			i++;
-			if (i % 5)
-				continue;
-		}
 
 		nukenewline(buf);
 
@@ -163,7 +153,7 @@ static void fetch() {
 		f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
-		import(f, stocks[i].weekly, &datedyears, true);
+		import(f, stocks[i].weekly, &datedyears);
 
 		#undef CMD
 		#undef URL
