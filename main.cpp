@@ -47,8 +47,11 @@ static void import(FILE * const f, std::vector<stockval> &vec, const struct tm *
 
 	while (fgets(buf, PATH_MAX, f)) {
 		if (!isdigit(buf[0])) {
-			if (strstr(buf, "{"))
+			if (strstr(buf, "{")) {
 				printf("Error: %s\n", buf);
+				while (fgets(buf, PATH_MAX, f))
+					printf("%s", buf);
+			}
 			continue;
 		}
 
