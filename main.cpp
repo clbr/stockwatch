@@ -41,14 +41,16 @@ static void picked(Fl_Widget *, void *data) {
 	status->copy_label(buf);
 }
 
-static void import(FILE * const f, std::vector<stockval> &vec, const struct tm * const until) {
+static void import(FILE * const f, std::vector<stockval> &vec, const struct tm * const until,
+			const char * const ticker, const bool weekly) {
 
 	char buf[PATH_MAX];
 
 	while (fgets(buf, PATH_MAX, f)) {
 		if (!isdigit(buf[0])) {
 			if (strstr(buf, "{")) {
-				printf("Error: %s\n", buf);
+				printf("\nError for %s (%s): %s\n", ticker,
+					weekly ? "weekly" : "daily", buf);
 				while (fgets(buf, PATH_MAX, f))
 					printf("%s", buf);
 			}
@@ -141,7 +143,7 @@ static void fetch() {
 		FILE *f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
-		import(f, stocks[i].daily, &datedmonths);
+		import(f, stocks[i].daily, &datedmonths, stocks[i].ticker, 0);
 
 		pclose(f);
 
@@ -161,7 +163,7 @@ static void fetch() {
 		f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
-		import(f, stocks[i].weekly, &datedyears);
+		import(f, stocks[i].weekly, &datedyears, stocks[i].ticker, 1);
 
 		#undef CMD
 		#undef URL
