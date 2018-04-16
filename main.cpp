@@ -49,10 +49,11 @@ static void import(FILE * const f, std::vector<stockval> &vec, const struct tm *
 	while (fgets(buf, PATH_MAX, f)) {
 		if (!isdigit(buf[0])) {
 			if (strstr(buf, "{")) {
-				printf("\nError for %s (%s): %s\n", ticker,
+				printf("\nError for %s (%s): %s", ticker,
 					weekly ? "weekly" : "daily", buf);
 				while (fgets(buf, PATH_MAX, f))
 					printf("%s", buf);
+				puts("");
 			}
 			continue;
 		}
