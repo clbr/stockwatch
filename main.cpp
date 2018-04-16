@@ -145,7 +145,7 @@ static void fetch() {
 
 		pclose(f);
 
-		usleep(1000 * 1250);
+		usleep(1000 * 1550);
 
 		// And weekly
 		#undef URL
@@ -168,7 +168,7 @@ static void fetch() {
 
 		pclose(f);
 
-		usleep(1000 * 1250);
+		usleep(1000 * 1550);
 	}
 
 	win->label("StockWatch");
