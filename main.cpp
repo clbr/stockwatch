@@ -41,7 +41,7 @@ static void picked(Fl_Widget *, void *data) {
 	status->copy_label(buf);
 }
 
-static void import(FILE * const f, std::vector<stockval> &vec, const struct tm * const until,
+static u8 import(FILE * const f, std::vector<stockval> &vec, const struct tm * const until,
 			const char * const ticker, const bool weekly) {
 
 	char buf[PATH_MAX];
@@ -54,6 +54,7 @@ static void import(FILE * const f, std::vector<stockval> &vec, const struct tm *
 				while (fgets(buf, PATH_MAX, f))
 					printf("%s", buf);
 				puts("");
+				return 0;
 			}
 			continue;
 		}
@@ -78,6 +79,8 @@ static void import(FILE * const f, std::vector<stockval> &vec, const struct tm *
 
 		vec.push_back(sv);
 	}
+
+	return 1;
 }
 
 static void getkey(char buf[17]) {
@@ -161,10 +164,12 @@ static void fetch() {
 			apikey);
 
 //		f = popen("cat weekly.sample", "r");
+		u8 fails = 0;
+retryweekly:
 		f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
-		import(f, stocks[i].weekly, &datedyears, stocks[i].ticker, 1);
+		const u8 ret = import(f, stocks[i].weekly, &datedyears, stocks[i].ticker, 1);
 
 		#undef CMD
 		#undef URL
@@ -172,6 +177,16 @@ static void fetch() {
 		pclose(f);
 
 		usleep(1000 * 1550);
+
+		if (!ret) {
+			fails++;
+			printf("Failed, sleeping longer and retrying... Time %u\n",
+				fails);
+			u8 t;
+			for (t = 0; t < fails; t++)
+				usleep(1000 * 4010);
+			goto retryweekly;
+		}
 	}
 
 	win->label("StockWatch");
