@@ -143,15 +143,27 @@ static void fetch() {
 			stocks[i].ticker,
 			apikey);
 
+		u8 fails = 0, ret;
+retrydaily:
 //		FILE *f = popen("cat daily.sample", "r");
 		FILE *f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
-		import(f, stocks[i].daily, &datedmonths, stocks[i].ticker, 0);
+		ret = import(f, stocks[i].daily, &datedmonths, stocks[i].ticker, 0);
 
 		pclose(f);
 
-		usleep(1000 * 1550);
+		usleep(1000 * 2050);
+
+		if (!ret) {
+			fails++;
+			printf("Failed, sleeping longer and retrying... Time %u\n",
+				fails);
+			u8 t;
+			for (t = 0; t < fails; t++)
+				usleep(1000 * 4010);
+			goto retrydaily;
+		}
 
 		// And weekly
 		#undef URL
@@ -164,19 +176,19 @@ static void fetch() {
 			apikey);
 
 //		f = popen("cat weekly.sample", "r");
-		u8 fails = 0;
+		fails = 0;
 retryweekly:
 		f = popen(buf, "r");
 		if (!f) die("Failed to fetch data\n");
 
-		const u8 ret = import(f, stocks[i].weekly, &datedyears, stocks[i].ticker, 1);
+		ret = import(f, stocks[i].weekly, &datedyears, stocks[i].ticker, 1);
 
 		#undef CMD
 		#undef URL
 
 		pclose(f);
 
-		usleep(1000 * 1550);
+		usleep(1000 * 2050);
 
 		if (!ret) {
 			fails++;
