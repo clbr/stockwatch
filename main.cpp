@@ -131,7 +131,7 @@ static void fetch() {
 	scroll->hide();
 
 	for (i = 0; i < max; i++) {
-		sprintf(titlebuf, "Fetching %s %u/%u", stocks[i].ticker, i + 1, max + 1);
+		sprintf(titlebuf, "Fetching %s %u/%u", stocks[i].ticker, i + 1, max);
 		win->label(titlebuf);
 
 		Fl::check();
