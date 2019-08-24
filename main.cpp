@@ -153,7 +153,7 @@ retrydaily:
 
 		pclose(f);
 
-		usleep(1000 * 2050);
+		usleep(1000 * 12050);
 
 		if (!ret) {
 			fails++;
@@ -188,7 +188,7 @@ retryweekly:
 
 		pclose(f);
 
-		usleep(1000 * 2050);
+		usleep(1000 * 12050);
 
 		if (!ret) {
 			fails++;
