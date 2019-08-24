@@ -49,12 +49,18 @@ static u8 import(FILE * const f, std::vector<stockval> &vec, const struct tm * c
 	while (fgets(buf, PATH_MAX, f)) {
 		if (!isdigit(buf[0])) {
 			if (strstr(buf, "{")) {
+				u8 ret = 0;
+
 				printf("\nError for %s (%s): %s", ticker,
 					weekly ? "weekly" : "daily", buf);
-				while (fgets(buf, PATH_MAX, f))
+				while (fgets(buf, PATH_MAX, f)) {
 					printf("%s", buf);
+					if (strstr(buf, "Invalid API"))
+						ret = 2; // Fail, but don't retry
+				}
 				puts("");
-				return 0;
+
+				return ret;
 			}
 			continue;
 		}
