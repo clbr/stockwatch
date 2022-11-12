@@ -143,7 +143,7 @@ static void fetch() {
 		Fl::check();
 
 		#define CMD "wget --no-check-cert --timeout 20 -q -O - "
-		#define URL "'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=%s&apikey=%s&datatype=csv'"
+		#define URL "'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=%s&apikey=%s&datatype=csv'"
 
 		sprintf(buf, CMD URL,
 			stocks[i].ticker,
